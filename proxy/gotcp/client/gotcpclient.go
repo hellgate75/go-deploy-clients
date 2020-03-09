@@ -6,6 +6,7 @@ import (
 	"fmt"
 	depio "github.com/hellgate75/go-deploy/io"
 	"github.com/hellgate75/go-deploy/net/generic"
+	"github.com/hellgate75/go-tcp-client/client/proxy"
 	"github.com/hellgate75/go-tcp-client/client/worker"
 	"github.com/hellgate75/go-tcp-client/common"
 	"golang.org/x/crypto/ssh"
@@ -735,6 +736,13 @@ func (conn *goTcpConnection) ConnectWithKeyAndPassphrase(addr string, user, keyf
 func (conn *goTcpConnection) Connect(network, addr string, config *ssh.ClientConfig) error {
 	return errors.New("User/rsa key connection not allowed to Go TCP Server")
 }
+
+func (conn *goTcpConnection) UsePlugins(PluginLibraryExtension string, PluginLibrariesFolder string) {
+	proxy.UsePlugins = true
+	proxy.PluginLibrariesExtension = PluginLibraryExtension
+	proxy.PluginLibrariesFolder = PluginLibrariesFolder
+}
+
 
 func (conn *goTcpConnection) ConnectWithCertificate(addr string, port string, certificate common.CertificateKeyPair, caCert string) error {
 	client := worker.NewClient(certificate, caCert, addr, port)

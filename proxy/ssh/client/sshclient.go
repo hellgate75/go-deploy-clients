@@ -559,6 +559,10 @@ func (conn *sshConnection) ConnectWithCertificate(addr string, port string, cert
 	return errors.New("Authentication with PEM client certificte and key not allowed in SSH")
 }
 
+func (conn *sshConnection) UsePlugins(PluginLibraryExtension string, PluginLibrariesFolder string) {
+	//INFO: No plugins available for default SSH Client
+}
+
 // NewSSHConnection: Creates a new SSH connection handler
 func NewSSHConnection() generic.ConnectionHandler {
 	return &sshConnection{
