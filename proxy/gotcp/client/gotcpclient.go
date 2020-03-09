@@ -738,9 +738,11 @@ func (conn *goTcpConnection) Connect(network, addr string, config *ssh.ClientCon
 }
 
 func (conn *goTcpConnection) UsePlugins(PluginLibraryExtension string, PluginLibrariesFolder string) {
-	proxy.UsePlugins = true
-	proxy.PluginLibrariesExtension = PluginLibraryExtension
-	proxy.PluginLibrariesFolder = PluginLibrariesFolder
+	if ! proxy.UsePlugins {
+		proxy.UsePlugins = true
+		proxy.PluginLibrariesExtension = PluginLibraryExtension
+		proxy.PluginLibrariesFolder = PluginLibrariesFolder
+	}
 }
 
 
