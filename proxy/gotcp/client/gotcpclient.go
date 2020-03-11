@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	depio "github.com/hellgate75/go-deploy/io"
+	depio "github.com/hellgate75/go-tcp-common/io"
 	"github.com/hellgate75/go-deploy/net/generic"
 	"github.com/hellgate75/go-tcp-client/client/proxy"
 	"github.com/hellgate75/go-tcp-client/client/worker"
