@@ -5,9 +5,9 @@ import (
 	"github.com/hellgate75/go-deploy-clients/proxy/ssh/client"
 )
 
-func NewSshConnectionHandler(singleSession bool) generic.ConnectionHandler {
+func NewSshConnectionHandler(singleSession bool, insecure bool) generic.ConnectionHandler {
 	if singleSession {
-		return client.NewSingleSessionSSHConnection()
+		return client.NewSingleSessionSSHConnection(insecure)
 	}
-	return client.NewSSHConnection()
+	return client.NewSSHConnection(insecure)
 }

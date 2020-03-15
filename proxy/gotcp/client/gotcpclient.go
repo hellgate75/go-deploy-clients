@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	depio "github.com/hellgate75/go-tcp-common/io"
 	"github.com/hellgate75/go-deploy/net/generic"
 	"github.com/hellgate75/go-tcp-client/client/proxy"
 	"github.com/hellgate75/go-tcp-client/client/worker"
 	"github.com/hellgate75/go-tcp-client/common"
+	depio "github.com/hellgate75/go-tcp-common/io"
 	"golang.org/x/crypto/ssh"
 	"io"
 	"io/ioutil"
@@ -539,6 +539,7 @@ func (rs *goTcpShell) Start() error {
 type goTcpClient struct {
 	client common.TCPClient
 	_singleSession bool
+	Insecure 		bool
 }
 
 func (conn *goTcpClient) Clone() generic.NetworkClient {
@@ -547,16 +548,19 @@ func (conn *goTcpClient) Clone() generic.NetworkClient {
 			return &goTcpClient{
 				client: conn.client,
 				_singleSession: conn._singleSession,
+				Insecure: conn.Insecure,
 			}
 		} else {
 			return &goTcpClient{
 				client: conn.client.Clone(),
 				_singleSession: conn._singleSession,
+				Insecure: conn.Insecure,
 			}
 		}
 	} else {
 		return &goTcpClient{
 			client: nil,
+			Insecure: conn.Insecure,
 		}
 	}
 }
@@ -686,6 +690,7 @@ func (c *goTcpClient) Shell() generic.RemoteShell {
 type goTcpConnection struct {
 	_client generic.NetworkClient
 	_singleSession bool
+	Insecure bool
 }
 
 func (conn *goTcpConnection) GetClient() generic.NetworkClient {
@@ -701,11 +706,13 @@ func (conn *goTcpConnection) Clone() generic.ConnectionHandler {
 		return &goTcpConnection{
 			_client: conn._client.Clone(),
 			_singleSession: conn._singleSession,
+			Insecure: conn.Insecure,
 		}
 	} else {
 		return &goTcpConnection{
 			_client: nil,
 			_singleSession: conn._singleSession,
+			Insecure: conn.Insecure,
 		}
 	}
 }
@@ -747,29 +754,32 @@ func (conn *goTcpConnection) UsePlugins(PluginLibraryExtension string, PluginLib
 
 
 func (conn *goTcpConnection) ConnectWithCertificate(addr string, port string, certificate common.CertificateKeyPair, caCert string) error {
-	client := worker.NewClient(certificate, caCert, addr, port)
+	client := worker.NewClient(certificate, caCert, conn.Insecure, addr, port)
 	if conn._singleSession {
-		client.Open(false)
+		client.Open(conn.Insecure)
 	}
 	conn._client = &goTcpClient{
 		client: client,
 		_singleSession: conn._singleSession,
+		Insecure: conn.Insecure,
 	}
 	return nil
 }
 
 // NewSSHConnection: Creates a new SSH connection handler
-func NewGoTCPConnection() generic.ConnectionHandler {
+func NewGoTCPConnection(insecure bool) generic.ConnectionHandler {
 	return &goTcpConnection{
 		_client: nil,
 		_singleSession: false,
+		Insecure: insecure,
 	}
 }
 
 // NewSSHConnection: Creates a new SSH connection handler
-func NewSingleSessionGoTCPConnection() generic.ConnectionHandler {
+func NewSingleSessionGoTCPConnection(insecure bool) generic.ConnectionHandler {
 	return &goTcpConnection{
 		_client: nil,
 		_singleSession: true,
+		Insecure: insecure,
 	}
 }

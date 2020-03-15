@@ -372,11 +372,10 @@ func (rs *sshShell) Start() error {
 				Term:   "xterm",
 				Height: 40,
 				Weight: 80,
-				Modes: ssh.TerminalModes{
-					ssh.ECHO:  0, // Disable echoing
-					ssh.IGNCR: 1, // Ignore CR on input.
-				},
+				Modes:  make(map[uint8]uint32),
 			}
+			tc.Modes[ssh.ECHO]=0 // Disable echoing
+			tc.Modes[ssh.IGNCR]=1 // Ignore CR on input.]
 		}
 		if err := session.RequestPty(tc.Term, tc.Height, tc.Weight, tc.Modes); err != nil {
 			return errors.New("SSHShell.Start: " + err.Error())
@@ -454,7 +453,8 @@ func (c *sshClient) Shell() generic.RemoteShell {
 }
 
 type sshConnection struct {
-	_client generic.NetworkClient
+	_client 	generic.NetworkClient
+	Insecure	bool
 }
 
 func (conn *sshConnection) GetClient() generic.NetworkClient {
@@ -564,15 +564,17 @@ func (conn *sshConnection) UsePlugins(PluginLibraryExtension string, PluginLibra
 }
 
 // NewSSHConnection: Creates a new SSH connection handler
-func NewSSHConnection() generic.ConnectionHandler {
+func NewSSHConnection(insecure bool) generic.ConnectionHandler {
 	return &sshConnection{
 		_client: nil,
+		Insecure: insecure,
 	}
 }
 
 // NewSSHConnection: Creates a new SSH connection handler
-func NewSingleSessionSSHConnection() generic.ConnectionHandler {
+func NewSingleSessionSSHConnection(insecure bool) generic.ConnectionHandler {
 	return &sshConnection{
 		_client: nil,
+		Insecure: insecure,
 	}
 }

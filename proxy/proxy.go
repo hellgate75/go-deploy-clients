@@ -9,8 +9,8 @@ import (
 )
 
 
-func newSshConnectionHandler(singleSession bool) (generic.ConnectionHandler, generic.ConnectionHandlerConfig) {
-	return ssh.NewSshConnectionHandler(singleSession), generic.ConnectionHandlerConfig{
+func newSshConnectionHandler(singleSession bool, insecure bool) (generic.ConnectionHandler, generic.ConnectionHandlerConfig) {
+	return ssh.NewSshConnectionHandler(singleSession, insecure), generic.ConnectionHandlerConfig{
 		UseAuthKey:             true,
 		UseAuthKeyPassphrase:   true,
 		UseSSHConfig:           true,
@@ -19,8 +19,8 @@ func newSshConnectionHandler(singleSession bool) (generic.ConnectionHandler, gen
 	}
 }
 
-func newGoTCPConnectionHandler(singleSession bool) (generic.ConnectionHandler, generic.ConnectionHandlerConfig) {
-	return gotcp.NewGoTCPConnectionHandler(singleSession), generic.ConnectionHandlerConfig{
+func newGoTCPConnectionHandler(singleSession bool, insecure bool) (generic.ConnectionHandler, generic.ConnectionHandlerConfig) {
+	return gotcp.NewGoTCPConnectionHandler(singleSession, insecure), generic.ConnectionHandlerConfig{
 		UseAuthKey:             false,
 		UseAuthKeyPassphrase:   false,
 		UseSSHConfig:           false,
@@ -37,4 +37,8 @@ func GetConnectionHandlerFactory(name string) (generic.NewConnectionHandlerFunc,
 		return newGoTCPConnectionHandler, nil
 	}
 	return nil, errors.New("Unable to discover '" + name + "' client!!")
+}
+
+func main(){
+
 }
